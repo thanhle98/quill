@@ -45,7 +45,14 @@ class Editor {
             let [leaf, ] = line.descendant(Parchment.Leaf, offset);
             formats = extend(formats, bubbleFormats(leaf));
           }
-          attributes = DeltaOp.attributes.diff(formats, attributes) || {};
+
+          const diff = DeltaOp.attributes.diff(formats, attributes) || {};
+          if (!equal(diff, attributes)) {
+            attributes = extend(diff, attributes) || {};
+          } else {
+            attributes = diff;
+          }
+
         } else if (typeof op.insert === 'object') {
           let key = Object.keys(op.insert)[0];  // There should only be one key
           if (key == null) return index;
